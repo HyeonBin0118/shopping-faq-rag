@@ -1,0 +1,7 @@
+.streamlit/secrets.toml
+Reviews.csv
+chroma_db/
+rag_env/
+__pycache__/
+*.pyc
+.env

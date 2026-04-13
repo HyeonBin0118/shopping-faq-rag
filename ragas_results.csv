@@ -1,0 +1,3 @@
+﻿버전,Faithfulness,Answer Relevancy,Context Precision,Context Recall
+Ollama (llama3.2 + MiniLM),0.7917,0.4435,0.75,0.875
+OpenAI (GPT-4o-mini + text-embedding-3-small),0.875,0.4666,0.875,0.875
