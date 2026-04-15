@@ -12,11 +12,8 @@
 
 ## 프로젝트 개요
 
-<<<<<<< HEAD
 ![챗봇 메인 화면](images/chatbot_main.png)
 
-=======
->>>>>>> ca63936996bca3f9e471cd80420485795402fa20
 ### 문제 정의
 쇼핑몰 고객센터는 배송, 환불, 상품 문의 등 반복적인 질문이 전체 문의의 70% 이상을 차지합니다. 이를 AI 챗봇으로 자동화하면 CS 운영 비용을 절감하고 24시간 즉각 응대가 가능해집니다.
 
@@ -163,11 +160,8 @@ else:
     allowed = {"faq"}
 ```
 
-<<<<<<< HEAD
 ![방수 등산화 추천 결과](images/product_recommend.png)
 
-=======
->>>>>>> ca63936996bca3f9e471cd80420485795402fa20
 **한국어↔영어 언어 불일치 해결**
 
 상품 DB가 영어로 구성되어 있어 "방수 등산화 추천해줘" 같은 한국어 쿼리로는 관련 문서를 찾지 못하는 문제가 있었습니다. **키워드 번역 맵**을 구현하여 상품 관련 질문 감지 시 자동으로 영어 쿼리로 변환하여 검색 정확도를 향상시켰습니다.
@@ -222,11 +216,8 @@ Rules:
 → Women's Merrell Moab 2 Waterproof Hiking Boots (1 lb. 3 oz.) 정확히 답변
 ```
 
-<<<<<<< HEAD
 ![멀티턴 대화 결과](images/multiturn.png)
 
-=======
->>>>>>> ca63936996bca3f9e471cd80420485795402fa20
 ---
 
 ### 6단계 — RAGAS 성능 비교 평가
@@ -245,7 +236,6 @@ Rules:
 
 | 지표 | Ollama v1 (llama3.2 + MiniLM) | OpenAI v2 (GPT-4o-mini + text-embedding-3-small) | 개선 |
 |---|---|---|---|
-<<<<<<< HEAD
 | Faithfulness | 0.7917 | **0.8750** | +8.3% |
 | Answer Relevancy | 0.4435 | **0.4666** | +2.3% |
 | Context Precision | 0.7500 | **0.8750** | +12.5% |
@@ -254,12 +244,6 @@ Rules:
 ![Ollama 할루시네이션 vs OpenAI 정상 답변](images/ollama_hallucination.png)
 
 ![RAGAS 평가 결과](images/ragas_result.png)
-=======
-| Faithfulness | 0.8125 | **0.8750** | +6.3% |
-| Answer Relevancy | 0.4370 | **0.4667** | +3.0% |
-| Context Precision | 0.7500 | **0.8750** | +12.5% |
-| Context Recall | 0.7500 | **0.8750** | +12.5% |
->>>>>>> ca63936996bca3f9e471cd80420485795402fa20
 
 > **결론:** OpenAI 버전이 모든 지표에서 우세하며, 특히 Context Precision/Recall이 +12.5% 향상되었습니다. 검색 단계의 품질이 전체 RAG 성능에 가장 큰 영향을 미친다는 점을 수치로 확인했습니다.
 
@@ -274,11 +258,7 @@ Rules:
 | 할루시네이션 | 발생 (없는 상품 생성) | 거의 없음 |
 | 응답 속도 | 로컬 GPU 의존 | 빠름 |
 | 인터넷 필요 | 불필요 | 필요 |
-<<<<<<< HEAD
 | RAGAS Faithfulness | 0.7917 | **0.8750** |
-=======
-| RAGAS Faithfulness | 0.8125 | **0.8750** |
->>>>>>> ca63936996bca3f9e471cd80420485795402fa20
 | RAGAS Context Precision | 0.7500 | **0.8750** |
 
 > **결론:** 프로덕션 환경에서는 GPT-4o-mini, 비용 제약 환경에서는 llama3.2 권장
