@@ -3,16 +3,18 @@
 > FAQ, 상품 정보, 고객 리뷰를 기반으로 고객 질문에 자동 답변하는 RAG(Retrieval-Augmented Generation) 챗봇
 
 ![Python](https://img.shields.io/badge/Python-3.11-blue)
-![LangChain](https://img.shields.io/badge/LangChain-1.2-green)
+![LangChain](https://img.shields.io/badge/LangChain-latest-green)
 ![ChromaDB](https://img.shields.io/badge/ChromaDB-Vector_DB-orange)
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-412991)
 ![Streamlit](https://img.shields.io/badge/Streamlit-UI-FF4B4B)
+
+> v2 (Re-ranking + 리뷰 번역 + Streamlit Cloud 배포): [shopping-rag-v2](https://github.com/HyeonBin0118/shopping-rag-v2)
 
 ---
 
 ## 프로젝트 개요
 
-![챗봇 메인 화면](images/chatbot_main.png)
+<img src="images/chatbot_main.png" width="700" />
 
 ### 문제 정의
 쇼핑몰 고객센터는 배송, 환불, 상품 문의 등 반복적인 질문이 전체 문의의 70% 이상을 차지합니다. 이를 AI 챗봇으로 자동화하면 CS 운영 비용을 절감하고 24시간 즉각 응대가 가능해집니다.
@@ -28,7 +30,7 @@
 
 ---
 
-##  기술 스택
+## 기술 스택
 
 | 분류 | 기술 |
 |---|---|
@@ -42,7 +44,7 @@
 
 ---
 
-##  아키텍처
+## 아키텍처
 
 ```
 [데이터 소스]           [벡터 DB]              [RAG 파이프라인]
@@ -128,7 +130,7 @@ splitter = RecursiveCharacterTextSplitter(
 | "환불 정책이 어떻게 돼요?" | 0.76 | 0.43 |
 | "hiking boots waterproof" | 0.75 | 0.64 |
 
-> **인사이트:** MiniLM은 다국어 특화 모델이라 한국어 쿼리에서 유사도 점수가 더 높게 나왔다. 그러나 단순 유사도 점수보다 실제 답변 품질을 반영하는 **RAGAS 수치(Context Precision +12.5%, Context Recall +12.5%)** 에서 text-embedding-3-small이 전체적으로 우세했다. 또한 LLM과 같은 OpenAI 생태계로 통일하여 벡터 공간의 일관성을 확보하는 것이 전환의 주된 이유였다.
+> **인사이트:** MiniLM은 다국어 특화 모델이라 한국어 쿼리에서 유사도 점수가 더 높게 나왔다. 그러나 단순 유사도 점수보다 실제 답변 품질을 반영하는 **RAGAS 수치(Context Precision +12.5%, Context Recall +12.5%)** 에서 text-embedding-3-small이 전체적으로 우세했다. 임베딩 모델 선택 시 데이터의 언어 분포와 실제 평가 지표를 함께 고려해야 한다.
 
 **ChromaDB 설정**
 ```python
@@ -160,8 +162,6 @@ else:
     allowed = {"faq"}
 ```
 
-![방수 등산화 추천 결과](images/product_recommend.png)
-
 **한국어↔영어 언어 불일치 해결**
 
 상품 DB가 영어로 구성되어 있어 "방수 등산화 추천해줘" 같은 한국어 쿼리로는 관련 문서를 찾지 못하는 문제가 있었습니다. **키워드 번역 맵**을 구현하여 상품 관련 질문 감지 시 자동으로 영어 쿼리로 변환하여 검색 정확도를 향상시켰습니다.
@@ -173,9 +173,13 @@ KO_TO_EN = {
 }
 ```
 
+![방수 등산화 추천 결과 — 한국어 쿼리를 영어로 변환하여 검색 성공](images/product_recommend.png)
+
 **프롬프트 엔지니어링**
 
-초기에는 한국어로 지시문을 작성했으나, llama3.2가 한국어 지시를 불완전하게 따르는 현상 발견(태국어/필리핀어 혼용). **영어 지시문으로 변경 후 할루시네이션이 감소**했습니다.
+초기에는 한국어로 지시문을 작성했으나, llama3.2가 한국어 지시를 불완전하게 따르는 현상 발견(태국어/필리핀어 혼용). 영어 지시문으로 변경 후 할루시네이션이 감소했습니다.
+
+![llama3.2 할루시네이션 vs GPT-4o-mini 정상 답변 비교](images/ollama_hallucination.png)
 
 ```python
 PROMPT_TEMPLATE = """You are a Korean shopping mall customer service chatbot.
@@ -216,15 +220,16 @@ Rules:
 → Women's Merrell Moab 2 Waterproof Hiking Boots (1 lb. 3 oz.) 정확히 답변
 ```
 
-![멀티턴 대화 결과](images/multiturn.png)
+![멀티턴 대화 결과 — 지시어 감지로 이전 문맥 기반 검색](images/multiturn.png)
 
 ---
 
 ### 6단계 — RAGAS 성능 비교 평가
 
-동일한 8개 테스트 질문으로 두 버전을 정량적으로 비교했습니다.
+동일한 8개 테스트 질문으로 Ollama와 OpenAI 두 버전을 정량적으로 비교했습니다.
 
 **평가 지표**
+
 | 지표 | 설명 |
 |---|---|
 | Faithfulness | 답변이 검색 문서에 충실한가 (할루시네이션 측정) |
@@ -233,17 +238,15 @@ Rules:
 | Context Recall | 필요한 문서를 빠짐없이 가져왔는가 |
 
 **비교 결과**
-
-| 지표 | Ollama v1 (llama3.2 + MiniLM) | OpenAI v2 (GPT-4o-mini + text-embedding-3-small) | 개선 |
+![RAGAS 평가 결과 — Ollama vs OpenAI 4개 지표 비교](images/ragas_result.png)
+| 지표 | Ollama (llama3.2 + MiniLM) | OpenAI (GPT-4o-mini + text-embedding-3-small) | 개선 |
 |---|---|---|---|
 | Faithfulness | 0.7917 | **0.8750** | +8.3% |
 | Answer Relevancy | 0.4435 | **0.4666** | +2.3% |
 | Context Precision | 0.7500 | **0.8750** | +12.5% |
 | Context Recall | 0.8750 | **0.8750** | - |
 
-![Ollama 할루시네이션 vs OpenAI 정상 답변](images/ollama_hallucination.png)
 
-![RAGAS 평가 결과](images/ragas_result.png)
 
 > **결론:** OpenAI 버전이 모든 지표에서 우세하며, 특히 Context Precision/Recall이 +12.5% 향상되었습니다. 검색 단계의 품질이 전체 RAG 성능에 가장 큰 영향을 미친다는 점을 수치로 확인했습니다.
 
@@ -265,7 +268,7 @@ Rules:
 
 ---
 
-##  설치 및 실행
+## 설치 및 실행
 
 ```bash
 # 1. 환경 설정
@@ -295,22 +298,6 @@ python step6_ragas_compare.py
 
 ---
 
-## 배운 점 및 개선 방향
-
-**배운 점**
-- 데이터 품질이 검색 정확도에 직결됨 (리뷰 데이터 오염 문제 직접 경험)
-- 프롬프트 언어(한국어 vs 영어)에 따라 LLM 응답 품질이 달라짐
-- 임베딩 모델 선택 시 데이터의 언어 분포를 고려해야 함
-- RAGAS로 성능을 수치화하면 모델 교체의 근거를 데이터로 제시할 수 있음
-
-**개선 방향**
-- 리뷰 데이터 한국어 번역 후 재임베딩
-- 청크 사이즈 실험 (300/500/700 비교)
-- Re-ranking 기법 적용으로 검색 정확도 향상
-- Streamlit Cloud 배포
-
----
-
 ## API 사용 비용
 
 | 항목 | 비용 |
@@ -319,6 +306,15 @@ python step6_ragas_compare.py
 | RAG 테스트 쿼리 (gpt-4o-mini) | ~$0.01 |
 | RAGAS 평가 (gpt-4o-mini) | ~$0.05 |
 | **합계** | **~$0.063 (약 90원)** |
+
+---
+
+## 개발 인사이트
+
+- 데이터 품질이 검색 정확도에 직결됨 — 영어 리뷰가 한국어 FAQ 검색을 오염시키는 문제를 직접 경험
+- 프롬프트 언어(한국어 vs 영어)에 따라 LLM 응답 품질이 달라짐 — llama3.2의 한국어 지시 불이행 문제 직접 확인
+- 임베딩 모델 선택 시 유사도 점수보다 실제 RAGAS 수치로 판단해야 함
+- RAGAS로 성능을 수치화하면 모델 교체의 근거를 데이터로 제시할 수 있음
 
 ---
 
