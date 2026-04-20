@@ -61,10 +61,9 @@ def build_vectordb(chunks):
         embeddings = get_embeddings(texts)
         collection.add(ids=ids, documents=texts, embeddings=embeddings, metadatas=metadatas)
 
-    print(f"\n✅ 저장 완료! {collection.count()}개 벡터 → 컬렉션: {COLLECTION}")
+    print(f"\n 저장 완료! {collection.count()}개 벡터 → 컬렉션: {COLLECTION}")
     return collection
 
 if __name__ == "__main__":
     chunks = load_chunks(CHUNKS_PATH)
     build_vectordb(chunks)
-    print("\nOllama용 DB 구축 완료! 이제 step6_ragas_compare.py 실행하세요.")

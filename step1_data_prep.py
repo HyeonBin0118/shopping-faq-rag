@@ -167,7 +167,6 @@ if __name__ == "__main__":
     product_chunks = process_products(PRODUCT_PATH)
     all_chunks.extend(product_chunks)
 
-    # 리뷰 (Reviews.csv 없으면 스킵)
     try:
         review_chunks = process_reviews(REVIEW_PATH, REVIEW_SAMPLE)
         all_chunks.extend(review_chunks)
@@ -175,7 +174,6 @@ if __name__ == "__main__":
         print("Reviews.csv 없음 → 리뷰 데이터 스킵")
         print("(Kaggle에서 Amazon Reviews 데이터셋 다운로드 후 재실행)")
 
-    # 저장
     save_chunks(all_chunks, OUTPUT_PATH)
 
     print(f"\n총 청크: {len(all_chunks)}개")
@@ -183,4 +181,3 @@ if __name__ == "__main__":
     print(f"  - 상품   : {len(product_chunks)}개")
     if 'review_chunks' in locals():
         print(f"  - 리뷰   : {len(review_chunks)}개")
-    print("\n다음 단계: python step2_embedding.py")

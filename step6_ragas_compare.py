@@ -106,7 +106,7 @@ prompt = PromptTemplate(
 def run_rag(question, vectorstore, llm):
     """단일 질문에 대해 RAG 실행 → 답변 + 검색 문서 반환"""
     docs = vectorstore.similarity_search(question, k=5)
-    # FAQ만 검색 (공정한 비교를 위해 동일 조건)
+    # FAQ만 검색
     docs = [d for d in docs if d.metadata.get("source") == "faq"][:5]
     if not docs:
         docs = vectorstore.similarity_search(question, k=5)
@@ -189,7 +189,6 @@ if __name__ == "__main__":
 
     except Exception as e:
         print(f"  ⚠ Ollama 오류: {e}")
-        print("  → Ollama가 실행 중인지 확인하세요: ollama serve")
 
     # ── v2: OpenAI 버전 ────────────────────────────
     print("\n[2/2] OpenAI 버전 (GPT-4o-mini + text-embedding-3-small) 초기화...")
@@ -244,5 +243,5 @@ if __name__ == "__main__":
 
     # CSV 저장
     df.to_csv("ragas_results.csv", index=False, encoding="utf-8-sig")
-    print("\n📊 결과 저장 완료: ragas_results.csv")
-    print("\n💡 이 수치를 README에 넣으세요!")
+    print("\n 결과 저장 완료: ragas_results.csv")
+    

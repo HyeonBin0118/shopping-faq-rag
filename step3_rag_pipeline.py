@@ -3,7 +3,7 @@ RAG 챗봇 3단계: LangChain RAG 파이프라인
 =========================================
 [변경 이력]
  v1 (Ollama 버전): llama3.2 로컬 LLM + HuggingFace 임베딩
- v2 (OpenAI 버전): GPT-4o-mini + text-embedding-3-small ← 현재
+ v2 (OpenAI 버전): GPT-4o-mini + text-embedding-3-small 
 
 [변경 이유]
  - llama3.2 한국어 불안정: 태국어/필리핀어 혼용, 할루시네이션 발생
@@ -46,8 +46,7 @@ vectorstore = Chroma(
     persist_directory=CHROMA_DIR,
 )
 
-# MMR(Maximal Marginal Relevance): 유사도 + 다양성 균형 검색
-# 단순 similarity 검색보다 중복 문서 반환 가능성이 낮아짐
+# MMR유사도 + 다양성 균형 검색
 retriever = vectorstore.as_retriever(
     search_type="mmr",
     search_kwargs={"k": 5, "fetch_k": 20}
@@ -94,7 +93,6 @@ prompt = PromptTemplate(
 
 # ── 5. RAG 체인 구성 ───────────────────────────────
 def format_docs(docs: list) -> str:
-    """검색된 문서를 프롬프트용 문자열로 합치기"""
     parts = []
     for i, doc in enumerate(docs, 1):
         src = doc.metadata.get("source", "unknown")
@@ -104,7 +102,6 @@ def format_docs(docs: list) -> str:
 
 
 def get_source_info(docs: list) -> list:
-    """출처 정보 추출"""
     return [
         {
             "source": d.metadata.get("source"),
@@ -116,7 +113,7 @@ def get_source_info(docs: list) -> list:
 
 
 # 한국어 상품 키워드 → 영어 번역 맵
-# (상품 DB가 영어로 구성되어 있어 한국어 쿼리 검색 보완용)
+# 상품 DB가 영어로 구성되어 있어 한국어 쿼리 검색 보완
 KO_TO_EN = {
     "등산화": "hiking boots",
     "방수": "waterproof",
