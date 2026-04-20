@@ -8,8 +8,7 @@
 ![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-412991)
 ![Streamlit](https://img.shields.io/badge/Streamlit-UI-FF4B4B)
 
-> v2 (Re-ranking + 리뷰 번역 + Streamlit Cloud 배포): [shopping-rag-v2](https://github.com/HyeonBin0118/shopping-rag-v2)
-
+> v2 (Re-ranking + 번역): [shopping-rag-v2](https://github.com/HyeonBin0118/shopping-rag-v2) · v3 (멀티모달): [shopping-rag-v3](https://github.com/HyeonBin0118/shopping-rag-v3) · v4 (RAGAs 평가): [shopping-rag-v4](https://github.com/HyeonBin0118/shopping-rag-v4) · Final: [shopping-rag-final](https://github.com/HyeonBin0118/shopping-rag-final)
 ---
 
 ## 프로젝트 개요
